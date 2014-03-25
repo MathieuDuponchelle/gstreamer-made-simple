@@ -4,8 +4,6 @@
 #include <glib.h>
 #include <gst/gst.h>
 
-int gms_lol(void);
-
 G_BEGIN_DECLS
 
 #define GMS_VERSION_MAJOR (1)
@@ -14,6 +12,7 @@ G_BEGIN_DECLS
 #define GMS_VERSION_NANO  (0)
 
 gboolean gms_init(void);
+
 void     gms_version (guint * major, guint * minor, guint * micro,
                       guint * nano);
 
