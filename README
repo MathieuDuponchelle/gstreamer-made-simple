@@ -1,0 +1,15 @@
+GStreamer is a powerful low-level library.
+
+The application development manual is around 200 pages long, and people
+looking for simple multimedia functionnalities will be rebuked by that.
+
+This library intends to fill that gap, even if for now it is quite empty :)
+
+All the boilerplate work is done to create new GObjects here, and have
+"bindings" be generated automatically thanks to introspection.
+
+I will fill it as I go, hoping other people will want to choose this library
+to centralize general purpose and miscellaneous high level functions and objects,
+with the purpose of simplifying GStreamer usage.
+
+I'll start contributing with a video stream comparer based on the ssim element.
