@@ -1,0 +1,145 @@
+Author: Mathieu Duponchelle
+Date: 26-03-2014
+
+Video Stream Comparator
+~~~~~~~~~~~~~~~~~~~~~~~
+
+* The purpose of this object is to allow for the comparison of n video files.
+* Live sources are out of scope.
+* Subsection commparison (compare 10th to 12th second of files) is in scope but won't be
+    implemented in the first phase.
+* Implementation will be done using the ssim element, which is in gst-plugins-bad. As such,
+    its presence will be required and tested at run time, and it will imply having opencv
+    installed on the target system.
+* The first phase will only work for two video files, improvements in the ssim element
+    will be needed to achieve n streams.
+* Asynchronicity is in scope, not to be implemented in the first phase.
+* Base classing for audio functionnalities could be done in the future, but I haven't
+    thought about the subject enough to provide a baseclass suitable for audio and video
+    comparators subclasses
+* Additionnally, pretty printing functions can be added to help figuring out the diffs.
+
+Summary
+~~~~~~~
+
+1) Basic design
+2) Usage
+3) API draft
+
+1. Basic design
+~~~~~~~~~~~~~~~
+
+  Video stream comparison will be achieved through the ssim element, which is similar to videomixer.
+  The pipeline that will be created will look like the following:
+
+	uridecodebin \
+		      \__ ssim __ fakesink
+		      /
+	uridecodebin /
+
+  zorder of the pads will be manipulated so that the reference stream has a zorder == 0, and incrementing.
+
+2. Usage
+~~~~~~~~
+
+  The user needs to:
+	a. Provide various uris, and specify the reference uri.
+	b. Provide a "tolerance" percentage, ie if frames match at more than 95 % -> OK
+	c. Be informed of the result, with per-stream and per-frame level of information.
+
+  The user may want to get results in a synchronous or asynchronous way.
+
+3. API draft
+~~~~~~~~~~~~
+
+GMSVideoStreamComparator
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Constants:
+  ----------
+
+  typedef enum {
+    GMS_STREAM_COMPARATOR_REPORT_LEVEL_FAILING_ONLY = 1 << 0,
+    GMS_STREAM_COMPARATOR_REPORT_LEVEL_PERCENTAGE_FAILING 1 << 1,
+  } GMSStreamComparatorReportLevel;
+
+  Method Prototypes:
+  ------------------
+
+  /**
+   * gms_video_stream_comparator_set_reference_uri:
+   * @uri: the uri of the reference file.
+   * @inpoint: the inpoint in the reference file, or -1 if from 0
+   * @duration: the duration starting from the inpoint, or -1 if rest of the file.
+   *
+   * Sets up the reference file against which other files will be compared.
+   */
+   void
+   gms_video_stream_comparator_set_reference_uri(const gchar *uri, guint64 inpoint, guint64 duration);
+
+
+  /**
+   * gms_video_stream_comparator_add_compared_uri:
+   * @uri: the uri of the reference file.
+   * @inpoint: the inpoint in the reference file, or -1 if from 0
+   * @duration: the duration starting from the inpoint, or -1 if rest of the file.
+   *
+   * Sets up the reference file against which other files will be compared.
+   * Returns: %TRUE if the comparator accepts handling that uri, %FALSE otherwise.
+   */
+   gboolean
+   gms_video_stream_comparator_add_compared_uri(const gchar *uri, guint64 inpoint, guint64 duration);
+
+
+  /**
+   * gms_video_stream_comparator_compare_sync:
+   *
+   * @tolerance: the ratio of difference tolerated between two video frames.
+   * @dump_directory: if specified, dump differing frames in that directory.
+   *
+   * Returns: %NULL if all the streams match, a #GList of non matching uris otherwise.
+   */
+   GList *
+   gms_video_stream_comparator_start_comparison_async(gfloat tolerance, const gchar *dump_directory);
+
+  /**
+   * gms_video_stream_comparator_get_results_for_uri:
+   *
+   * Not implemented
+   */
+
+  /**
+   * gms_video_stream_comparator_print_results_for_uri:
+   *
+   * @uri: The uri for which a report needs to be printed in stdout.
+   * @detail_level: a #GMSStreamComparatorReportLevel
+   *
+   * Will print a report for the stream comparison, according to the level
+   * of detail requested. By default, it will display the results for all the frames.
+   */
+   void
+   gms_video_stream_comparator_print_results_for_uri(const gchar *uri, GMSStreamComparatorReportLevel level);
+
+  /**
+   * gms_video_stream_comparator_clear_compared_uris:
+   *
+   * Not implemented
+   */
+
+  /**
+   * gms_video_stream_comparator_clear_reference_uri:
+   *
+   * Not implemented
+   */
+
+  /**
+   * gms_video_stream_comparator_reset:
+   *
+   * Not implemented
+   */
+
+  /**
+   * gms_video_stream_comparator_compare_async:
+   *
+   * Not implemented
+   */
