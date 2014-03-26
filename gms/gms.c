@@ -30,12 +30,12 @@ GST_DEBUG_CATEGORY (_gms_debug);
 /**
  * gms_init:
  *
- * Does nothing. Might do something in the future so it's a good idea
- * to include it from the get go.
+ * Initializes gst.
  */
 gboolean
 gms_init (void)
 {
+  gst_init (NULL, NULL);
   return TRUE;
 }
 

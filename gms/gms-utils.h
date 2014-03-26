@@ -16,31 +16,21 @@
  * Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  */
-
-#ifndef __GMS_H__
-#define __GMS_H__
+ 
+#ifndef __GMS_UTILS_H__
+#define __GMS_UTILS_H__
 
 #include <glib.h>
 #include <gst/gst.h>
 
-#include <gms/gms-types.h>
-#include <gms/gms-enums.h>
-
-#include <gms/gms-video-stream-comparator.h>
-#include <gms/gms-utils.h>
-
 G_BEGIN_DECLS
 
-#define GMS_VERSION_MAJOR (1)
-#define GMS_VERSION_MINOR (0)
-#define GMS_VERSION_MICRO (0)
-#define GMS_VERSION_NANO  (0)
-
-gboolean gms_init(void);
-
-void     gms_version (guint * major, guint * minor, guint * micro,
-                      guint * nano);
+gboolean
+gms_generate_test_file_audio_video_sync (const gchar * location,
+    const gchar * audio_encoder,
+    const gchar * video_encoder,
+    const gchar * muxer, const gchar * video_pattern, const gchar * audio_wave, gint duration);
 
 G_END_DECLS
 
-#endif /* __GMS_H__ */
+#endif /* __GMS_UTILS_H__ */
