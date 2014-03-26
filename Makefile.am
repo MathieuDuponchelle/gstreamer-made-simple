@@ -1,6 +1,6 @@
 DISTCHECK_CONFIGURE_FLAGS=--enable-gtk-doc
 
-SUBDIRS = gms
+SUBDIRS = gms tests
 
 DIST_SUBDIRS = $(SUBDIRS)
 

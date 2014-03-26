@@ -353,6 +353,8 @@ common/m4/Makefile
 gstreamer-made-simple.spec
 m4/Makefile
 gms/Makefile
+tests/Makefile
+tests/check/Makefile
 )
 
 AC_OUTPUT
