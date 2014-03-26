@@ -24,6 +24,7 @@
 #include <glib-object.h>
 #include <gst/gst.h>
 #include <gms/gms-types.h>
+#include <gms/gms-enums.h>
 
 G_BEGIN_DECLS
 
@@ -67,6 +68,25 @@ struct _GMSVideoStreamComparatorClass
 GType gms_video_stream_comparator_get_type (void) G_GNUC_CONST;
 GMSVideoStreamComparator * gms_video_stream_comparator_new (void);
 
+
+gboolean
+gms_video_stream_comparator_add_compared_uri(GMSVideoStreamComparator *comparator,
+					                                  const gchar *uri,
+					                                  guint64 inpoint,
+					                                  guint64 duration);
+void
+gms_video_stream_comparator_set_reference_uri(GMSVideoStreamComparator *comparator,
+                                              const gchar *uri,
+                                              guint64 inpoint,
+                                              guint64 duration);
+void
+gms_video_stream_comparator_print_results_for_uri(GMSVideoStreamComparator *comparator,
+                                    					    const gchar *uri,
+						                                      GMSVideoStreamComparatorReportLevel level);
+GList *
+gms_video_stream_comparator_compare_sync(GMSVideoStreamComparator *comparator,
+                                    		 gfloat tolerance,
+						                             const gchar *dump_directory);
 G_END_DECLS
 
 #endif /* _GMS_VIDEO_STREAM_COMPARATOR */

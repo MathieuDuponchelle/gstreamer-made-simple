@@ -17,29 +17,26 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef __GMS_H__
-#define __GMS_H__
 
-#include <glib.h>
-#include <gst/gst.h>
-
-#include <gms/gms-types.h>
-#include <gms/gms-enums.h>
-
-#include <gms/gms-video-stream-comparator.h>
+#ifndef __GMS_ENUMS_H__
+#define __GMS_ENUMS_H__
 
 G_BEGIN_DECLS
 
-#define GMS_VERSION_MAJOR (1)
-#define GMS_VERSION_MINOR (0)
-#define GMS_VERSION_MICRO (0)
-#define GMS_VERSION_NANO  (0)
-
-gboolean gms_init(void);
-
-void     gms_version (guint * major, guint * minor, guint * micro,
-                      guint * nano);
+/**
+ * GMSVideoStreamComparatorReportLevel:
+ * @GMS_VIDEO_STREAM_COMPARATOR_REPORT_LEVEL_FAILING_ONLY: The report will only show
+ *  non-matching frames.
+ * @GMS_VIDEO_STREAM_COMPARATOR_REPORT_LEVEL_PERCENTAGE_FAILING: The report will
+ * display a percentage of non-matching frames at the end.
+ *
+ * The various levels of reporting for a stream comparison
+ */
+typedef enum {
+  GMS_VIDEO_STREAM_COMPARATOR_REPORT_LEVEL_FAILING_ONLY = 1 << 0,
+  GMS_VIDEO_STREAM_COMPARATOR_REPORT_LEVEL_PERCENTAGE_FAILING = 1 << 1,
+} GMSVideoStreamComparatorReportLevel;
 
 G_END_DECLS
 
-#endif /* __GMS_H__ */
+#endif /* __GMS_ENUMS_H__ */

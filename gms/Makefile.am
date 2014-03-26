@@ -17,6 +17,7 @@ libgms_@GST_API_VERSION@include_HEADERS = 	\
 	$(built_header_make)			\
 	gms.h                                   \
 	gms-types.h                             \
+	gms-enums.h                             \
 	gms-video-stream-comparator.h
 
 libgms_@GST_API_VERSION@_la_CFLAGS = -I$(top_srcdir) $(GST_PBUTILS_CFLAGS) \
