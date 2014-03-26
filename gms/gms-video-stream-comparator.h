@@ -25,15 +25,16 @@
 #include <gst/gst.h>
 #include <gms/gms-types.h>
 #include <gms/gms-enums.h>
+#include <gms/gms-video-stream-comparator-result.h>
 
 G_BEGIN_DECLS
 
 #define GMS_TYPE_VIDEO_STREAM_COMPARATOR            gms_video_stream_comparator_get_type()
-#define GMS_VIDEO_STREAM_COMPARATOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GMS_TYPE_TRACK, GMSVideoStreamComparator))
-#define GMS_VIDEO_STREAM_COMPARATOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GMS_TYPE_TRACK, GMSVideoStreamComparatorClass))
-#define GES_IS_TRACK(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GMS_TYPE_TRACK))
-#define GES_IS_TRACK_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GMS_TYPE_TRACK))
-#define GMS_VIDEO_STREAM_COMPARATOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GMS_TYPE_TRACK, GMSVideoStreamComparatorClass))
+#define GMS_VIDEO_STREAM_COMPARATOR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GMS_TYPE_VIDEO_STREAM_COMPARATOR, GMSVideoStreamComparator))
+#define GMS_VIDEO_STREAM_COMPARATOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GMS_TYPE_VIDEO_STREAM_COMPARATOR, GMSVideoStreamComparatorClass))
+#define GMS_IS_VIDEO_STREAM_COMPARATOR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GMS_TYPE_VIDEO_STREAM_COMPARATOR))
+#define GMS_IS_VIDEO_STREAM_COMPARATOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GMS_TYPE_VIDEO_STREAM_COMPARATOR))
+#define GMS_VIDEO_STREAM_COMPARATOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GMS_TYPE_VIDEO_STREAM_COMPARATOR, GMSVideoStreamComparatorClass))
 
 typedef struct _GMSVideoStreamComparatorPrivate GMSVideoStreamComparatorPrivate;
 

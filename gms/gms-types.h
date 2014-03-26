@@ -28,4 +28,7 @@
 typedef struct _GMSVideoStreamComparator GMSVideoStreamComparator;
 typedef struct _GMSVideoStreamComparatorClass GMSVideoStreamComparatorClass;
 
+typedef struct _GMSVideoStreamComparatorResult GMSVideoStreamComparatorResult;
+typedef struct _GMSVideoStreamComparatorResultClass GMSVideoStreamComparatorResultClass;
+
 #endif /* __GMS_TYPES_H__ */
