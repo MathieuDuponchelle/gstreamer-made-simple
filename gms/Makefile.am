@@ -9,12 +9,15 @@ CLEANFILES = $(BUILT_SOURCES) $(built_header_make) $(built_source_make) *.gcno *
 
 libgms_@GST_API_VERSION@_la_SOURCES = 		\
 	$(built_source_make)			\
-	gms.c
+	gms.c                                     \
+	gms-video-stream-comparator.c
 
 libgms_@GST_API_VERSION@includedir = $(includedir)/gstreamer-@GST_API_VERSION@/gms/
 libgms_@GST_API_VERSION@include_HEADERS = 	\
 	$(built_header_make)			\
-	gms.h
+	gms.h                                   \
+	gms-types.h                             \
+	gms-video-stream-comparator.h
 
 libgms_@GST_API_VERSION@_la_CFLAGS = -I$(top_srcdir) $(GST_PBUTILS_CFLAGS) \
 		$(GST_VIDEO_CFLAGS) $(GST_CONTROLLER_CFLAGS) $(GST_PLUGINS_BASE_CFLAGS) \

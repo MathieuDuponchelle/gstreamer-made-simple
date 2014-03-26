@@ -4,6 +4,10 @@
 #include <glib.h>
 #include <gst/gst.h>
 
+#include <gms/gms-types.h>
+
+#include <gms/gms-video-stream-comparator.h>
+
 G_BEGIN_DECLS
 
 #define GMS_VERSION_MAJOR (1)
