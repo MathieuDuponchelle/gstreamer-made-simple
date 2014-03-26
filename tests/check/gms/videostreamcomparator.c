@@ -23,8 +23,8 @@ GST_START_TEST (same_files)
   uri = g_filename_to_uri (g_strconcat (g_get_current_dir (),
           "/ball_sine.ogg", NULL), NULL, NULL);
 
-  gms_video_stream_comparator_set_reference_uri (comp, uri, -1, -1);
-  gms_video_stream_comparator_add_compared_uri (comp, uri, -1, -1);
+  gms_video_stream_comparator_set_reference_uri (comp, uri, 0, 0);
+  gms_video_stream_comparator_add_compared_uri (comp, uri, 0, 0);
   res = gms_video_stream_comparator_compare_sync (comp, 0.95, 0);
 
   gms_video_stream_comparator_print_results_for_uri (comp, uri, 0);
@@ -42,8 +42,8 @@ GST_START_TEST (different_files)
   gchar *compared_uri = g_filename_to_uri (g_strconcat (g_get_current_dir (),
           "/smpte_sine_1.ogg", NULL), NULL, NULL);
 
-  gms_video_stream_comparator_set_reference_uri (comp, reference_uri, -1, -1);
-  gms_video_stream_comparator_add_compared_uri (comp, compared_uri, -1, -1);
+  gms_video_stream_comparator_set_reference_uri (comp, reference_uri, 0, 0);
+  gms_video_stream_comparator_add_compared_uri (comp, compared_uri, 0, 0);
   res = gms_video_stream_comparator_compare_sync (comp, 0.95, 0);
   gms_video_stream_comparator_print_results_for_uri (comp, compared_uri,
       GMS_VIDEO_STREAM_COMPARATOR_REPORT_LEVEL_PERCENTAGE_FAILING);
