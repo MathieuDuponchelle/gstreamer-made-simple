@@ -110,12 +110,12 @@ gms_video_stream_comparator_set_reference_uri (GMSVideoStreamComparator *
 /**
  * gms_video_stream_comparator_add_compared_uri:
  * @comparator: a #GMSVideoStreamComparator
- * @uri: the uri of the reference file.
- * @inpoint: the inpoint in the reference file, or -1 if from 0
+ * @uri: the uri a file to compare.
+ * @inpoint: the inpoint in the file, or -1 if from 0
  * @duration: the duration starting from the inpoint, or -1 if rest of the file.
  *
- * Sets up the reference file against which other files will be compared.
- * Returns: %TRUE if the comparator accepts handling that uri, %FALSE otherwise.
+ * Adds a file to compare agains the reference uri.
+ * Returns: TRUE if the comparator accepts handling that uri, FALSE otherwise.
  */
 gboolean
 gms_video_stream_comparator_add_compared_uri (GMSVideoStreamComparator *
@@ -214,8 +214,8 @@ my_bus_callback (GstBus * bus, GstMessage * message,
  * @tolerance: the ratio of difference tolerated between two video frames.
  * @dump_directory: if specified, dump differing frames in that directory.
  *
- * Returns: (transfer full) (element-type utf8): %NULL if all the streams match,
- * a #GList of non matching uris otherwise.
+ * Returns: (transfer full) (element-type utf8): NULL if all the streams match,
+ * a GList of non matching uris otherwise.
  */
 GList *
 gms_video_stream_comparator_compare_sync (GMSVideoStreamComparator * comparator,

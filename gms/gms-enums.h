@@ -24,6 +24,11 @@
 G_BEGIN_DECLS
 
 /**
+ * SECTION:gms-enums
+ * @short_description: Various enums for GStreamer made simple.
+ */
+
+/**
  * GMSVideoStreamComparatorReportLevel:
  * @GMS_VIDEO_STREAM_COMPARATOR_REPORT_LEVEL_FAILING_ONLY: The report will only show
  *  non-matching frames.

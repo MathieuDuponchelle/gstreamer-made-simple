@@ -355,6 +355,9 @@ m4/Makefile
 gms/Makefile
 tests/Makefile
 tests/check/Makefile
+docs/Makefile
+docs/libs/Makefile
+docs/version.entities
 )
 
 AC_OUTPUT

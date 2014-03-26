@@ -24,16 +24,16 @@
  * gms_generate_test_file_audio_video_sync:
  * @location: the location at which to save the generated file.
  * @audio_encoder: (allow-none): the name of the audio encoder, such as "vorbisenc",
- *   or #NULL if no audio encoding.
+ *   or NULL if no audio encoding.
  * @video_encoder: the name of the video encoder, such as "theoraenc"
  * @muxer: the name of the muxer, such as "oggmux"
- * @video_pattern: (allow-none): the name of the video pattern, such as "ball", or #NULL
+ * @video_pattern: (allow-none): the name of the video pattern, such as "ball", or NULL
  *   for default.
- * @audio_wave: (allow-none): the name of the audio wave, such as "blue-noise", or #NULL
+ * @audio_wave: (allow-none): the name of the audio wave, such as "blue-noise", or NULL
  *  for default.
  * @duration: the duration in seconds of the resulting file.
  *
- * Returns: #TRUE if the file was created or already exited, #FALSE in
+ * Returns: TRUE if the file was created or already exited, FALSE in
  * case of any errors.
  *
  * Will create an audio / video file at the specified location.

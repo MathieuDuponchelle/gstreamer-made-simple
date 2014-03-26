@@ -21,7 +21,6 @@
 
 GST_DEBUG_CATEGORY (_gms_debug);
 
-
 /**
  * SECTION:gms-common
  * @short_description: Initialization.

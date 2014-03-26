@@ -1,0 +1,5 @@
+#include <gst/gst.h>
+#include <gms/gms.h>
+
+gms_video_stream_comparator_get_type
+gms_video_stream_comparator_result_get_type

@@ -1,0 +1,17 @@
+gms-decl-list.txt
+gms-decl.txt
+gms-overrides.txt
+gms-undeclared.txt
+gms-undocumented.txt
+gms-unused.txt
+gms.args
+gms.hierarchy
+gms.interfaces
+gms.prerequisites
+gms.signals
+*.stamp
+
+html/
+tmpl/
+xml/
+doc-registry.xml
