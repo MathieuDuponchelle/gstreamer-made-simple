@@ -17,21 +17,43 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef __GMS_TYPES_H__
-#define __GMS_TYPES_H__
+#include <string.h>
+#include "gms-waveformer.h"
 
-/* Padding */
-#define GMS_PADDING         4
+struct _GMSWaveformerPrivate
+{
+  gpointer nothing;
+};
 
-/* Type definitions */
+G_DEFINE_TYPE (GMSWaveformer, gms_waveformer, G_TYPE_OBJECT);
 
-typedef struct _GMSVideoStreamComparator GMSVideoStreamComparator;
-typedef struct _GMSVideoStreamComparatorClass GMSVideoStreamComparatorClass;
+static void
+gms_waveformer_init (GMSWaveformer * wf)
+{
+  wf->priv =
+      G_TYPE_INSTANCE_GET_PRIVATE (wf, GMS_TYPE_WAVEFORMER,
+      GMSWaveformerPrivate);
+}
 
-typedef struct _GMSVideoStreamComparatorResult GMSVideoStreamComparatorResult;
-typedef struct _GMSVideoStreamComparatorResultClass GMSVideoStreamComparatorResultClass;
+static void
+gms_waveformer_class_init (GMSWaveformerClass * klass)
+{
+  g_type_class_add_private (klass, sizeof (GMSWaveformerPrivate));
+}
 
-typedef struct _GMSWaveformer GMSWaveformer;
-typedef struct _GMSWaveformerClass GMSWaveformerClass;
+/**
+ * gms_waveformer_new:
+ *
+ * Creates a new #GMSWaveformer
+ *
+ * Returns: A new #GMSWaveformer.
+ */
+GMSWaveformer *
+gms_waveformer_new (void)
+{
+  GMSWaveformer *wf;
 
-#endif /* __GMS_TYPES_H__ */
+  wf = g_object_new (GMS_TYPE_WAVEFORMER, NULL);
+
+  return wf;
+}

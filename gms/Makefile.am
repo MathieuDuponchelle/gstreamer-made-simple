@@ -11,6 +11,7 @@ libgms_@GST_API_VERSION@_la_SOURCES = 		\
 	$(built_source_make)			\
 	gms.c                                     \
 	gms-video-stream-comparator.c            \
+	gms-waveformer.c                         \
 	gms-utils.c
 
 libgms_@GST_API_VERSION@includedir = $(includedir)/gstreamer-@GST_API_VERSION@/gms/
@@ -20,6 +21,7 @@ libgms_@GST_API_VERSION@include_HEADERS = 	\
 	gms-types.h                             \
 	gms-enums.h                             \
 	gms-video-stream-comparator.h           \
+	gms-waveformer.h                        \
 	gms-utils.h
 
 libgms_@GST_API_VERSION@_la_CFLAGS = -I$(top_srcdir) $(GST_PBUTILS_CFLAGS) \

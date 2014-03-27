@@ -1,0 +1,103 @@
+Author: Mathieu Duponchelle
+Date: 27-03-2014
+
+Waveform visualizer
+~~~~~~~~~~~~~~~~~~~
+
+* The purpose of this object is to allow for extensive audio waveform visualization.
+* Live sources are in scope and in first phase
+* Scrolling, resizing and zooming are in scope and in first phase
+* Customizing (changing the color, mirror effect) are in scope but not in first phase.
+* Multiple target surfaces are in scope, only cairo in first phase.
+* CPU control thanks to seek with rates is in scope.
+* Memory and CPU management are essential.
+
+Summary
+~~~~~~~
+
+1) Basic design
+2) Usage
+3) API draft
+
+1. Basic design
+~~~~~~~~~~~~~~~
+
+  Extraction of the waveforms will be achieved thanks to the level element.
+  The pipeline will look like :
+
+  user_provided_element ---- level ---- fakesink sync=true
+
+  Rate modulation will be done to make sure we don't blast CPUs, people diserve a say
+  in their room's temperature.
+
+2. Usage
+~~~~~~~~
+
+  The user can either:
+    a. Provide a functionnal pipeline outputting audio.
+    b. Use a higher level helper function to simply generate waveforms for a URI.
+
+  The user can either:
+    a. Ask for display of a range in a width ( 15 -> 30 seconds in 500 pixels)
+    b. In the case of a live source, ask for a constantly moving window in a width (last 10 seconds in 30 pixels)
+
+  In the case of a static uri, the user can additionnally ask for "X % max of the CPU used"
+
+3. API draft
+
+GMSBaseWaveformer
+~~~~~~~~~~~~~~~~~
+
+Method Prototypes:
+------------------
+
+/**
+ * gms_base_waveformer_set_pipeline:
+ * @waveformer: A #GMSBaseWaveformer
+ * @pipeline: A #GstPipeline.
+ * @start_waveforming: TRUE if waveform generating is to be started as soon as possible,
+ * FALSE otherwise, waveforming can be started later thanks to gms_base_waveformer_start.
+ *
+ * Low level function, can be useful for live visualization.
+ * In the case of an audio playback application for example, one could have
+ * such a pipeline : src --- level --- sink.
+ * Providing the pipeline will let us monitor the level events transparently.
+ * GMS won't be able to modulate the rate on such pipelines.
+ *
+ * Returns: TRUE if the pipeline can be monitored, FALSE otherwise.
+ */
+ gboolean
+ gms_base_waveformer_set_pipeline(GMSBaseWaveformer *waveformer, GstPipeline *pipeline, gboolean start_waveforming);
+
+/**
+ * gms_base_waveformer_start:
+ * @waveformer: A #GMSBaseWaveformer
+ * 
+ * Useful when a waveformer has been created, but level monitoring was not asked for from the get go.
+ */
+ void
+ gms_base_waveformer_start(GMSBaseWaveformer *waveformer);
+
+/**
+ * gms_base_waveformer_stop:
+ * @waveformer: A #GMSBaseWaveformer
+ *
+ * Will stop level monitoring, and the pipeline if it was created by GMS.
+ *
+ * Current state will be kept until the element is disposed of, which means one can restart
+ * a waveformer stopped in such fashion.
+ */
+ void
+ gms_base_waveformer_stop(GMSBaseWaveformer *waveformer);
+
+/**
+ * gms_base_waveformer_set_uri:
+ * @waveformer: A #GMSBaseWaveformer
+ * @uri: The uri of the file to monitor.
+ * @start_waveforming: TRUE if waveform generating is to be started as soon as possible,
+ * FALSE otherwise, waveforming can be started later thanks to gms_base_waveformer_start.
+ *
+ *
+ */
+ void
+ gms_base_waveformer_set_uri(GMSBaseWaveformer *waveformer, gchar *uri, gboolean start_waveforming);
