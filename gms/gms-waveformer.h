@@ -68,6 +68,9 @@ struct _GMSWaveformerClass
 GType gms_waveformer_get_type (void) G_GNUC_CONST;
 GMSWaveformer * gms_waveformer_new (void);
 
+gboolean
+gms_waveformer_set_uri(GMSWaveformer *waveformer, const gchar *uri, gboolean start_waveforming);
+
 G_END_DECLS
 
 #endif /* _GMS_WAVEFORMER */
