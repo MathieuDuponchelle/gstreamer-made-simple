@@ -17,11 +17,12 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <string.h>
+#include <math.h>               /* pow For getting on a 0 <-> 100 scale */
 #include "gms-waveformer.h"
 
 struct _GMSWaveformerPrivate
 {
+  GList *peaks;
   gchar *uri;
   GstPipeline *pipeline;
   gboolean is_pipeline_owner;
@@ -37,6 +38,7 @@ gms_waveformer_init (GMSWaveformer * wf)
   wf->priv =
       G_TYPE_INSTANCE_GET_PRIVATE (wf, GMS_TYPE_WAVEFORMER,
       GMSWaveformerPrivate);
+  wf->priv->peaks = NULL;
 }
 
 static void
@@ -53,7 +55,30 @@ wave_bus_callback (GstBus * bus, GstMessage * message, GMSWaveformer * wf)
   switch (GST_MESSAGE_TYPE (message)) {
     case GST_MESSAGE_ELEMENT:
       if (GST_MESSAGE_SRC (message) == GST_OBJECT (wf->priv->level)) {
-        GST_ERROR ("message from level baby");
+        const GstStructure *s = gst_message_get_structure (message);
+        const GValue *array_val;
+        GValueArray *arr = NULL;
+        const GValue *v;
+        GstTimedValue *value = g_slice_new (GstTimedValue);
+        gdouble rms = 0;
+        gint i;
+        guint64 stream_time;
+
+        /* FIXME : make level not use GValueArrays to avoid deprecation warnings. */
+        v = gst_structure_get_value (s, "stream-time");
+        stream_time = g_value_get_uint64 (v);
+        array_val = gst_structure_get_value (s, "rms");
+        arr = (GValueArray *) g_value_get_boxed (array_val);
+        for (i = 0; i < arr->n_values; i++) {
+          v = g_value_array_get_nth (arr, i);
+          rms += g_value_get_double (v);
+        }
+        rms /= arr->n_values;
+        value->timestamp = stream_time;
+        value->value = pow (10, rms / 20.0) * 100;
+        GST_ERROR ("rms for time %" GST_TIME_FORMAT " is %lf",
+            GST_TIME_ARGS (value->timestamp), value->value);
+        priv->peaks = g_list_append (priv->peaks, value);
       }
       break;
     case GST_MESSAGE_ERROR:{
@@ -121,15 +146,24 @@ find_by_type_name (GstBin * bin, const gchar * type_name)
   return element;
 }
 
-static void
+static gboolean
 monitor_pipeline (GMSWaveformer * wf)
 {
+  gboolean res = TRUE;
   GMSWaveformerPrivate *priv = wf->priv;
 
   priv->level = find_by_type_name (GST_BIN (wf->priv->pipeline), "GstLevel");
+  if (!priv->level) {
+    res = FALSE;
+    goto beach;
+  }
+
   priv->bus_watch_id =
       gms_pipeline_add_watch (wf->priv->pipeline,
       (GstBusFunc) wave_bus_callback, wf);
+
+beach:
+  return res;
 }
 
 static gboolean
@@ -143,7 +177,8 @@ start_pipeline_for_uri (GMSWaveformer * wf)
   priv = wf->priv;
   launch_string =
       g_strdup_printf ("uridecodebin uri=%s expose-all-streams=false "
-      "caps=audio/x-raw ! level ! fakesink sync=true", priv->uri);
+      "caps=audio/x-raw ! level interval=10000000 ! fakesink sync=true",
+      priv->uri);
 
   error = NULL;
   priv->pipeline = GST_PIPELINE (gst_parse_launch (launch_string, &error));
@@ -185,6 +220,24 @@ gms_waveformer_set_uri (GMSWaveformer * wf, const gchar * uri,
     res = start_pipeline_for_uri (wf);
 
   return res;
+}
+
+/**
+ * gms_waveformer_set_pipeline:
+ * @waveformer: A #GMSWaveformer
+ * @pipeline: the pipeline to monitor for waveform levels
+ * @start_monitoring: Whether to start monitoring immediately
+ *
+ */
+gboolean
+gms_waveformer_set_pipeline (GMSWaveformer * wf, GstPipeline * pipeline,
+    gboolean start_waveforming)
+{
+  GMSWaveformerPrivate *priv = wf->priv;
+
+  priv->is_pipeline_owner = FALSE;
+  priv->pipeline = pipeline;
+  return monitor_pipeline (wf);
 }
 
 /**

@@ -71,6 +71,9 @@ GMSWaveformer * gms_waveformer_new (void);
 gboolean
 gms_waveformer_set_uri(GMSWaveformer *waveformer, const gchar *uri, gboolean start_waveforming);
 
+gboolean
+gms_waveformer_set_pipeline (GMSWaveformer *wf, GstPipeline *pipeline, gboolean start_waveforming);
+
 G_END_DECLS
 
 #endif /* _GMS_WAVEFORMER */
