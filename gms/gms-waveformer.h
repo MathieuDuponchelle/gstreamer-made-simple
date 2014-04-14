@@ -28,6 +28,11 @@
 
 G_BEGIN_DECLS
 
+/**
+ * SECTION:gms-waveformer
+ * @short_description: Object that collects waveform information.
+ */
+
 #define GMS_TYPE_WAVEFORMER            gms_waveformer_get_type()
 #define GMS_WAVEFORMER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GMS_TYPE_WAVEFORMER, GMSWaveformer))
 #define GMS_WAVEFORMER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GMS_TYPE_WAVEFORMER, GMSWaveformerClass))
@@ -72,7 +77,10 @@ gboolean
 gms_waveformer_set_uri(GMSWaveformer *waveformer, const gchar *uri, gboolean start_waveforming);
 
 gboolean
-gms_waveformer_set_pipeline (GMSWaveformer *wf, GstPipeline *pipeline, gboolean start_waveforming);
+gms_waveformer_set_pipeline (GMSWaveformer *waveformer, GstPipeline *pipeline, gboolean start_waveforming);
+
+GstClockTime
+gms_waveformer_get_current_duration(GMSWaveformer *wf);
 
 G_END_DECLS
 

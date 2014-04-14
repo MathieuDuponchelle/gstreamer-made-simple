@@ -34,4 +34,7 @@ typedef struct _GMSVideoStreamComparatorResultClass GMSVideoStreamComparatorResu
 typedef struct _GMSWaveformer GMSWaveformer;
 typedef struct _GMSWaveformerClass GMSWaveformerClass;
 
+typedef struct _GMSCairoWaveformRenderer GMSCairoWaveformRenderer;
+typedef struct _GMSCairoWaveformRendererClass GMSCairoWaveformRendererClass;
+
 #endif /* __GMS_TYPES_H__ */

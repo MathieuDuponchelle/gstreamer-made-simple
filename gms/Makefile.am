@@ -12,6 +12,7 @@ libgms_@GST_API_VERSION@_la_SOURCES = 		\
 	gms.c                                     \
 	gms-video-stream-comparator.c            \
 	gms-waveformer.c                         \
+	gms-cairo-waveform-renderer.c              \
 	gms-utils.c
 
 libgms_@GST_API_VERSION@includedir = $(includedir)/gstreamer-@GST_API_VERSION@/gms/
@@ -21,17 +22,18 @@ libgms_@GST_API_VERSION@include_HEADERS = 	\
 	gms-types.h                             \
 	gms-enums.h                             \
 	gms-video-stream-comparator.h           \
+	gms-cairo-waveform-renderer.h           \
 	gms-waveformer.h                        \
 	gms-utils.h
 
 libgms_@GST_API_VERSION@_la_CFLAGS = -I$(top_srcdir) $(GST_PBUTILS_CFLAGS) \
 		$(GST_VIDEO_CFLAGS) $(GST_CONTROLLER_CFLAGS) $(GST_PLUGINS_BASE_CFLAGS) \
-		$(GST_CFLAGS) $(XML_CFLAGS) $(GIO_CFLAGS)
+		$(GST_CFLAGS) $(XML_CFLAGS) $(GIO_CFLAGS) $(cairo_CFLAGS)
 libgms_@GST_API_VERSION@_la_LIBADD = $(GST_PBUTILS_LIBS) \
 		$(GST_VIDEO_LIBS) $(GST_CONTROLLER_LIBS) $(GST_PLUGINS_BASE_LIBS) \
-		$(GST_BASE_LIBS) $(GST_LIBS) $(XML_LIBS) $(GIO_LIBS)
+		$(GST_BASE_LIBS) $(GST_LIBS) $(XML_LIBS) $(GIO_LIBS) $(cairo_LIBS)
 libgms_@GST_API_VERSION@_la_LDFLAGS = $(GST_LIB_LDFLAGS) $(GST_ALL_LDFLAGS) \
-		$(GST_LT_LDFLAGS) $(GIO_CFLAGS)
+		$(GST_LT_LDFLAGS) $(GIO_CFLAGS) $(cairo_LIBS)
 
 DISTCLEANFILE = $(CLEANFILES)
 
@@ -59,6 +61,7 @@ GMS-@GST_API_VERSION@.gir: $(INTROSPECTION_SCANNER) libgms-@GST_API_VERSION@.la
 		--identifier-prefix=GMS \
 		--symbol-prefix=gms \
 		--warn-all \
+		-v \
 		$(gir_cincludes) \
 		-I$(top_srcdir) \
 		-I$(top_builddir) \
@@ -69,15 +72,18 @@ GMS-@GST_API_VERSION@.gir: $(INTROSPECTION_SCANNER) libgms-@GST_API_VERSION@.la
 		--add-include-path=`$(PKG_CONFIG) --variable=girdir gstreamer-tag-@GST_API_VERSION@` \
 		--add-include-path=`$(PKG_CONFIG) --variable=girdir gstreamer-base-@GST_API_VERSION@` \
 		--add-include-path=`$(PKG_CONFIG) --variable=girdir gio-2.0` \
+		--add-include-path=`$(PKG_CONFIG) cairo --cflags --libs` \
 		--library=libgms-@GST_API_VERSION@.la \
 		--include=Gst-@GST_API_VERSION@ \
 		--include=GstPbutils-@GST_API_VERSION@ \
 		--include=Gio-2.0 \
+		--include=cairo-1.0 \
 		--libtool="$(top_builddir)/libtool" \
 		--pkg gstreamer-@GST_API_VERSION@ \
 		--pkg gstreamer-pbutils-@GST_API_VERSION@ \
 		--pkg gstreamer-controller-@GST_API_VERSION@ \
 		--pkg gio-2.0 \
+		--pkg cairo \
 		--pkg-export gms-@GST_API_VERSION@ \
 		--add-init-section="gst_init(NULL, NULL);" \
 		--add-init-section="gms_init(NULL, NULL);" \

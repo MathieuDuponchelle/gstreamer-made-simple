@@ -19,6 +19,15 @@
 
 #include <math.h>               /* pow For getting on a 0 <-> 100 scale */
 #include "gms-waveformer.h"
+#include <gst/pbutils/pbutils.h>
+
+enum
+{
+  PEAK_ADDED,
+  LAST_SIGNAL
+};
+
+static guint gms_waveformer_signals[LAST_SIGNAL] = { 0 };
 
 struct _GMSWaveformerPrivate
 {
@@ -28,6 +37,7 @@ struct _GMSWaveformerPrivate
   gboolean is_pipeline_owner;
   guint bus_watch_id;
   GstElement *level;
+  GstClockTime duration;
 };
 
 G_DEFINE_TYPE (GMSWaveformer, gms_waveformer, G_TYPE_OBJECT);
@@ -45,6 +55,18 @@ static void
 gms_waveformer_class_init (GMSWaveformerClass * klass)
 {
   g_type_class_add_private (klass, sizeof (GMSWaveformerPrivate));
+
+  /**
+   * GMSWaveformer:peak-added:
+   * @object: the #GESWaveformer
+   * @peak: the #GstTimedValue peak that was added.
+   *
+   * Will be emitted when a peak is added to the waveformer.
+   */
+  gms_waveformer_signals[PEAK_ADDED] =
+      g_signal_new ("peak-added", G_TYPE_FROM_CLASS (klass),
+      G_SIGNAL_RUN_FIRST, 0, NULL, NULL, g_cclosure_marshal_generic,
+      G_TYPE_NONE, 1, G_TYPE_POINTER);
 }
 
 static gboolean
@@ -76,9 +98,9 @@ wave_bus_callback (GstBus * bus, GstMessage * message, GMSWaveformer * wf)
         rms /= arr->n_values;
         value->timestamp = stream_time;
         value->value = pow (10, rms / 20.0) * 100;
-        GST_ERROR ("rms for time %" GST_TIME_FORMAT " is %lf",
-            GST_TIME_ARGS (value->timestamp), value->value);
         priv->peaks = g_list_append (priv->peaks, value);
+        g_signal_emit (wf, gms_waveformer_signals[PEAK_ADDED], 0,
+            (gpointer) value);
       }
       break;
     case GST_MESSAGE_ERROR:{
@@ -166,18 +188,21 @@ beach:
   return res;
 }
 
-static gboolean
-start_pipeline_for_uri (GMSWaveformer * wf)
+static void
+uri_discovered_cb (GstDiscoverer * disco, GstDiscovererInfo * info,
+    GError * disco_error, GMSWaveformer * wf)
 {
-  gboolean res = TRUE;
   GMSWaveformerPrivate *priv;
   gchar *launch_string;
   GError *error;
 
   priv = wf->priv;
+
+  priv->duration = gst_discoverer_info_get_duration (info);
+
   launch_string =
       g_strdup_printf ("uridecodebin uri=%s expose-all-streams=false "
-      "caps=audio/x-raw ! level interval=10000000 ! fakesink sync=true",
+      "caps=audio/x-raw ! level interval=10000000 ! pulsesink sync=true",
       priv->uri);
 
   error = NULL;
@@ -186,18 +211,26 @@ start_pipeline_for_uri (GMSWaveformer * wf)
   if (!priv->pipeline) {
     GST_ERROR ("Cannot construct waveforming pipeline, the error is : %s",
         error->message);
-    res = FALSE;
-    goto beach;
+    return;
   }
 
   priv->is_pipeline_owner = TRUE;
   monitor_pipeline (wf);
 
   gst_element_set_state (GST_ELEMENT (priv->pipeline), GST_STATE_PLAYING);
+}
 
-beach:
-  g_free (launch_string);
-  return res;
+static gboolean
+start_pipeline_for_uri (GMSWaveformer * wf)
+{
+  GstDiscoverer *disco;
+
+  disco = gst_discoverer_new (3 * GST_SECOND, NULL);
+  g_signal_connect (disco, "discovered", G_CALLBACK (uri_discovered_cb), wf);
+  gst_discoverer_start (disco);
+  gst_discoverer_discover_uri_async (disco, wf->priv->uri);
+
+  return TRUE;
 }
 
 /**
@@ -208,16 +241,16 @@ beach:
  *
  */
 gboolean
-gms_waveformer_set_uri (GMSWaveformer * wf, const gchar * uri,
+gms_waveformer_set_uri (GMSWaveformer * waveformer, const gchar * uri,
     gboolean start_waveforming)
 {
   gboolean res = TRUE;
-  GMSWaveformerPrivate *priv = wf->priv;
+  GMSWaveformerPrivate *priv = waveformer->priv;
 
   priv->uri = g_strdup (uri);
 
   if (start_waveforming)
-    res = start_pipeline_for_uri (wf);
+    res = start_pipeline_for_uri (waveformer);
 
   return res;
 }
@@ -226,18 +259,31 @@ gms_waveformer_set_uri (GMSWaveformer * wf, const gchar * uri,
  * gms_waveformer_set_pipeline:
  * @waveformer: A #GMSWaveformer
  * @pipeline: the pipeline to monitor for waveform levels
- * @start_monitoring: Whether to start monitoring immediately
+ * @start_waveforming: Whether to start monitoring immediately
  *
  */
 gboolean
-gms_waveformer_set_pipeline (GMSWaveformer * wf, GstPipeline * pipeline,
+gms_waveformer_set_pipeline (GMSWaveformer * waveformer, GstPipeline * pipeline,
     gboolean start_waveforming)
 {
-  GMSWaveformerPrivate *priv = wf->priv;
+  GMSWaveformerPrivate *priv = waveformer->priv;
 
   priv->is_pipeline_owner = FALSE;
   priv->pipeline = pipeline;
-  return monitor_pipeline (wf);
+  return monitor_pipeline (waveformer);
+}
+
+/**
+ * gms_waveformer_get_duration:
+ * @waveformer: A #GMSWaveformer
+ *
+ * Returns: The duration of the current uri or the amount monitored
+ * on the set pipeline.
+ */
+GstClockTime
+gms_waveformer_get_current_duration (GMSWaveformer * wf)
+{
+  return wf->priv->duration;
 }
 
 /**

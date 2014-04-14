@@ -27,6 +27,8 @@
 #include <gms/gms-enums.h>
 
 #include <gms/gms-video-stream-comparator.h>
+#include <gms/gms-waveformer.h>
+#include <gms/gms-cairo-waveform-renderer.h>
 #include <gms/gms-utils.h>
 
 G_BEGIN_DECLS
